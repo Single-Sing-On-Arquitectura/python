@@ -52,9 +52,26 @@ def login():
         if response.status_code == 200:
           token = response.json()['token']
           
-        else:
-           messagebox.showerror("Error", response.json()['mensaje'])
+          # falta agregar funcionalidad despues de que inicia sesión
+          #
+          #
         
+        else:
+          if response.json()['mensaje'] == 'Ya existe una sesión activa, debe cerrar sesión en el otro dispositivo':
+            if messagebox.askyesno(message= response.json()['mensaje'] + "¿Desea cerrarla?", title="Sesión Activa"):
+              cerrarSesiones()
+          else:
+            messagebox.showerror("Error", response.json()['mensaje'])
+
+           
+def cerrarSesiones():
+  payload = {'user': user_login.get(), 'password': pass_login.get()}
+  response = requests.post('https://ssoufps.herokuapp.com/signoffall', json=payload)
+  if response.status_code == 200:
+    messagebox.showinfo("Éxito", response.json()['mensaje'])  
+  else:
+    messagebox.showerror("Error", response.json()['mensaje'])
+
          
 def register():
         ventana_secundaria = tk.Toplevel()
